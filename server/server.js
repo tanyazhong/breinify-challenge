@@ -8,6 +8,7 @@ import redis from 'redis';
 const client = redis.createClient();
 
 await client.connect();
+
 client.on('connect', function (err) {
 	if (err) {
 		console.log('Could not establish a connection with Redis. ' + err);
@@ -26,65 +27,48 @@ app.get('/', (req, res) => {
 	res.send('In the server');
 });
 
+// const cb = async (req, res) => {
+// 	await client.set('key', JSON.stringify({ hello: 'world' }));
+// 	const value = await client.get('key');
+// 	res.send({ value: value });
+// }
+// app.get('/test', cb)
 
 // GET
-// helper func gets all cards
-function getCards() {
-	return new Promise((resolve, reject) => {
-		client.get("cards", (err, cards) => {
-			if (!err) { resolve(JSON.parse(cards)); }
-		})
+const getCards = async (req, res) => {
+	// await client.set('cards', JSON.stringify([{ hello: 'world' }]));
+	const data = await client.get('cards', (err, val) => {
+		if (err) throw err;
 	})
+	res.send({ cards: JSON.parse(data) })
 }
 
-app.get('/getCards', async (req, res) => {
-	// Please finish the logic in retrieving the cards from redis
-	// await client.set('key', JSON.stringify({ hello: 'world' }));
-	// const value = await client.get('key');
-	// res.send({ value: JSON.parse(value) });
-	try {
-		getCards().then(cards => {
-			res.json({ cards: cards }).status(200);
-		})
-	}
-	catch (e) {
-		res.json({ err: e }).status(500);
-	}
-});
+app.get('/getCards', getCards);
 
 // POST
-function addCard(item) {
-	return new Promise((resolve, reject) => {
-		getCards.then(cards => {
-			// console.log(cards)
-			if (cards === null) {
-				const newCards = [item];
-				client.set("cards", JSON.stringify(newCards), (err, stored) => {
-					if (stored) { resolve(item); }
-				})
-			}
-			else {
-				cards.push(item);
-				client.set("cards", JSON.stringify(cards), (err, stored) => {
-					if (stored) { resolve(item); }
-				})
-			}
-		})
+
+const addCard = async (req, res) => {
+	const item = req.body.item;
+	let cards = await client.get('cards', (err, val) => {
+		if (err) throw err;
 	})
+	let parsedCards = JSON.parse(cards);
+	if (parsedCards === null) {
+		parsedCards = [item];
+	}
+	else { 
+		parsedCards.push(item);
+	}
+	client.set("cards", JSON.stringify(parsedCards), (err, val) => {
+		if (err) throw err;
+	})
+	cards = await client.get('cards', (err, val) => {
+		if (err) throw err;
+	})
+	res.send({ cards: cards })
 }
 
-app.get('/addCard', async (req, res) => {
-	try {
-		const item = req.body.item;
-		// console.log(item)
-		addCard(item).then(added => {
-			res.json({ added: added }).status(200);
-		})
-	} 
-	catch (e) {
-		res.json({ err: e }).status(500);
-	}
-})
+app.post('/addCard', addCard)
 
 // PUT
 function updateCard(item) {
@@ -103,13 +87,13 @@ function updateCard(item) {
 	})
 }
 
-app.get('/updateCard', async (req, res) => {
+app.get('/updateCard', (req, res) => {
 	try {
 		const item = req.body.item;
 		updateCard(item).then(updated => {
 			res.json({ updated: updated }).status(200);
 		})
-	} 
+	}
 	catch (e) {
 		res.json({ err: e }).status(500);
 	}
@@ -120,11 +104,11 @@ app.get('/updateCard', async (req, res) => {
 function removeCard(id) {
 	return new Promise((resolve, reject) => {
 		getCards().then(cards => {
-			newCards = [];
-			removed = null;
-			for (const product of cards) {
-				if (product.id != id) newCards.push(product);
-				else removed = product;
+			let newCards = [];
+			let removed;
+			for (const item of cards) {
+				if (item.id != id) newCards.push(item);
+				else removed = item;
 			}
 			client.set("cards", JSON.stringify(newCards), (err, stored) => {
 				if (stored) {
@@ -135,16 +119,24 @@ function removeCard(id) {
 	})
 }
 
-app.get('/removeCard/:id', async (req, res) => {
+app.get('/removeCard/:id', (req, res) => {
 	try {
 		const id = req.params.id;
 		removeCard(id).then(removed => {
 			res.json({ removed: removed }).status(200);
 		})
-	} catch (e) {
+	}
+	catch (e) {
 		res.json({ err: e }).status(500);
 	}
 })
 
+// addCard({ id: 1, name: "shirt", description: "a short shirt" }).then(res => {
+// 	console.log(res);
+// 	getCards().then(cards => {
+// 		console.log(cards);
+// 	})
+// })
 
 app.listen(port, () => console.log(`Running on port: ${port}`));
+
