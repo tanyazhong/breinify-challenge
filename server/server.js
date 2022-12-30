@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
 // app.get('/test', cb)
 
 // GET
+
 const getCards = async (req, res) => {
 	// await client.set('cards', JSON.stringify([{ hello: 'world' }]));
 	const data = await client.get('cards', (err, val) => {
