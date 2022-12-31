@@ -1,0 +1,17 @@
+.header {
+    background-color: lightblue;
+    height: 125px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .dropdown {
+    margin: 10px;
+    display: inline-block;
+  }
+  
+  .dropdown-toggle {
+    background-color: darkblue !important;
+    border: none !important;
+  }

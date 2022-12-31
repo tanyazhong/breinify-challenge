@@ -1,6 +1,12 @@
+.card-container {
+    /* display: grid; */
+    width: 100%;
+    text-align: center;
+}
+
 .card {
     width: 400px;
-    margin: 25px;
+    margin: 25px auto 25px auto;
     border-radius: 30px !important;
 }
 
@@ -19,7 +25,7 @@
     background-color: white;
     border: 0px;
     margin: 4px;
-    color:#5A5A5A;
+    color: #5A5A5A;
 }
 
 .button-icon {

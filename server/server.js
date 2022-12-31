@@ -30,18 +30,18 @@ app.get('/', (req, res) => {
 const PRODUCTS_KEY = 'products';
 
 const handleError = (err, val) => {
-	if (err) throw err;
+	if (err) console.log(err);
 }
 
 // initialize db with products passed from frontend
 const cb = async (req, res) => {
 	await client.set(PRODUCTS_KEY, JSON.stringify(req.body.products));
-	const data = await client.get(PRODUCTS_KEY);
-	res.send({ products: JSON.parse(data) });
+	const products = await client.get(PRODUCTS_KEY);
+	res.send({ products: JSON.parse(products) });
 }
 app.post('/initProducts', cb)
 
-// GET
+///////////////////// GET ////////////////////////
 const getProducts = async (req, res) => {
 	const data = await client.get(PRODUCTS_KEY, handleError)
 	res.send({ products: JSON.parse(data) })
@@ -49,18 +49,12 @@ const getProducts = async (req, res) => {
 
 app.get('/getProducts', getProducts);
 
-// POST
+///////////////////// POST ////////////////////////
 const addProduct = async (req, res) => {
 	const item = req.body.item;
 	let products = await client.get(PRODUCTS_KEY, handleError)
 	let parsedProducts = JSON.parse(products);
-	if (parsedProducts === null) {
-		parsedProducts = [item];
-	}
-	else {
-		parsedProducts.push(item);
-	}
-	// set the data
+	parsedProducts === null ? parsedProducts = [item] : parsedProducts.push(item);
 	client.set("products", JSON.stringify(parsedProducts), handleError)
 	products = await client.get(PRODUCTS_KEY, handleError)
 	res.send({ products: JSON.parse(products) })
@@ -68,7 +62,7 @@ const addProduct = async (req, res) => {
 
 app.post('/addProduct', addProduct)
 
-// PUT
+////////////////////// PUT /////////////////////////
 const updateProduct = async (req, res) => {
 	const item = req.body.item;
 	let products = await client.get(PRODUCTS_KEY, handleError)
@@ -87,7 +81,7 @@ const updateProduct = async (req, res) => {
 
 app.put('/updateProduct', updateProduct)
 
-// DELETE
+/////////////////////// DELETE /////////////////////////
 const deleteProduct = async (req, res) => {
 	const id = req.body.id;
 	let products = await client.get(PRODUCTS_KEY, handleError)

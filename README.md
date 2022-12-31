@@ -63,7 +63,6 @@ You will have 1 week to finish this challenge. Once you finish, please push your
 ### Additional Information:
 
 We added a `"proxy": "http://localhost:5001"` into package.json to help clean up endpoint calls.
-changed proxy to "http://127.0.0.1:5001"
 
 
 

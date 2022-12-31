@@ -3,13 +3,21 @@ import { Card } from 'react-bootstrap/';
 import { IProduct } from '../../interface/IProduct';
 import { FaTrashAlt, FaPencilAlt } from 'react-icons/fa'
 import { productData } from '../../productData';
+import { Header } from '../Header/Header';
 import './Dashboard.css';
 
 export function Dashboard() {
 	const [products, setProducts] = useState<IProduct[]>([])
+	const [ascending, setAscending] = useState(true)
 
+	// get a compare fn for products based on 'ascending' state
+	const getCompareFn = (a: IProduct, b: IProduct) => {
+		if (ascending) { return a.creationTime < b.creationTime ? - 1 : a.creationTime > b.creationTime ? 1 : 0 }
+		else { return a.creationTime > b.creationTime ? -1 : a.creationTime < b.creationTime ? 1 : 0 }
+	}
+
+	// on render, init db with some product data, sort data then update 'products' state
 	useEffect(() => {
-		// init db with some product data
 		try {
 			fetch('/initProducts', {
 				method: 'POST',
@@ -17,24 +25,36 @@ export function Dashboard() {
 				body: JSON.stringify({ products: productData }),
 			})
 				.then((res) => res.json())
-				.then((data) => setProducts(data.products as IProduct[]))
+				.then((data) => setProducts((data.products as IProduct[]).sort(getCompareFn)))
 				.catch((err) => console.log(err))
 		}
 		catch (error) { console.log(error) }
 	}, []);
 
+	// console log 'products' state changes
 	useEffect(() => {
-		console.log(products)
+		console.log(products);
 	}, [products]);
 
-	// const getProduct = () => {
-	// 	fetch('/getProduct')
-	// 		.then((res) => res.json())
-	// 		.then(data => {
-	// 			setProducts(data.products)
-	// 		})
-	// 		.catch((err) => console.log(err))
-	// }
+	// Control sorting from child component
+	const handleSorting = (sortAscending: boolean) => {
+		if (sortAscending !== ascending) { setAscending(sortAscending); }
+	}
+
+	// when 'ascending' state changes, sort the products
+	useEffect(() => {
+		const sorted = [...products].reverse();
+		setProducts(sorted);
+	}, [ascending]);
+
+	const getProducts = () => {
+		fetch('/getProducts')
+			.then((res) => res.json())
+			.then(data => {
+				setProducts((data.products as IProduct[]).sort(getCompareFn))
+			})
+			.catch((err) => console.log(err))
+	}
 
 	const addProduct = () => {
 		fetch('/addProduct', {
@@ -43,15 +63,15 @@ export function Dashboard() {
 			body: JSON.stringify({
 				// name: formData, // Use your own property name / key
 				item: {
-					productName: "Scarf",
+					productName: "YEAH",
 					description: "A wool scarf.",
-					creationTime: 5,
+					creationTime: new Date(),
 					id: 5,
 				},
 			}),
 		})
 			.then((res) => res.json())
-			.then((data) => setProducts(data.products as IProduct[]))
+			.then((data) => setProducts((data.products as IProduct[]).sort(getCompareFn)))
 			.catch((err) => console.log(err))
 	}
 
@@ -65,10 +85,10 @@ export function Dashboard() {
 	// 				id: 2,
 	// 				name: "milk"
 	// 			}
-	// 		}),
+	// 		}), 
 	// 	})
 	// 		.then((res) => res.json())
-	// 		.then((data) => setProducts(data))
+	// 		.then((data) => setProducts((data.products as IProduct[]).sort(getCompareFn)))
 	// 		.catch((err) => console.log(err))
 	// }
 
@@ -79,7 +99,7 @@ export function Dashboard() {
 			body: JSON.stringify({ id: id }),
 		})
 			.then((res) => res.json())
-			.then((data) => setProducts(data.products as IProduct[]))
+			.then((data) => setProducts((data.products as IProduct[])))
 			.catch((err) => console.log(err))
 	}
 
@@ -90,24 +110,27 @@ export function Dashboard() {
 
 	return (
 		<div>
-			{products.length > 0 ? (products.map((product, i) =>
-				<Card className='card' key={i}>
-					{/* <Card.Img variant="top" src="holder.js/100px180" /> */}
-					<Card.Body>
-						<Card.Title>{product.productName}</Card.Title>
-						<Card.Text>{product.description}</Card.Text>
-						<div className='action-buttons'>
-							<button className="button" onClick={() => deleteProduct(product.id)}>
-								<div className="button-icon"><FaPencilAlt /></div>
-							</button>
-							<button className="button" onClick={() => deleteProduct(product.id)}>
-								<div className="button-icon"><FaTrashAlt /></div>
-							</button>
-						</div>
-					</Card.Body>
-				</Card>))
-				: <></>
-			}
+			<Header handleSorting={handleSorting} addProduct={addProduct} />
+			<div className='card-container'>
+				{products.length > 0 ? (products.map((product, i) =>
+					<Card className='card' key={i}>
+						{/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+						<Card.Body>
+							<Card.Title>{product.productName}</Card.Title>
+							<Card.Text>{product.description}</Card.Text>
+							<div className='action-buttons'>
+								<button className="button" onClick={() => deleteProduct(product.id)}>
+									<div className="button-icon"><FaPencilAlt /></div>
+								</button>
+								<button className="button" onClick={() => deleteProduct(product.id)}>
+									<div className="button-icon"><FaTrashAlt /></div>
+								</button>
+							</div>
+						</Card.Body>
+					</Card>))
+					: <></>
+				}
+			</div>
 		</div>
 	);
 }
