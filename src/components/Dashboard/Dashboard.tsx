@@ -1,56 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card } from 'react-bootstrap/';
+import { Card } from 'react-bootstrap/';
 import { IProduct } from '../../interface/IProduct';
-// import { IProduct } from '../../interface/IProduct';
-// import {v4 as uuidv4} from 'uuid';
+import { FaTrashAlt, FaPencilAlt } from 'react-icons/fa'
 import { productData } from '../../productData';
+import './Dashboard.css';
 
 export function Dashboard() {
-	const [cards, setCards] = useState<IProduct[]>([])
+	const [products, setProducts] = useState<IProduct[]>([])
 
 	useEffect(() => {
 		// init db with some product data
 		try {
-			fetch('/initCards', {
+			fetch('/initProducts', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json', },
-				body: JSON.stringify({ cards: productData }),
+				body: JSON.stringify({ products: productData }),
 			})
 				.then((res) => res.json())
-				.then((data) => setCards(data.cards as IProduct[]))
+				.then((data) => setProducts(data.products as IProduct[]))
 				.catch((err) => console.log(err))
 		}
 		catch (error) { console.log(error) }
 	}, []);
 
-	// const getCard = () => {
-	// 	fetch('/getCard')
+	useEffect(() => {
+		console.log(products)
+	}, [products]);
+
+	// const getProduct = () => {
+	// 	fetch('/getProduct')
 	// 		.then((res) => res.json())
 	// 		.then(data => {
-	// 			setCards(data.cards)
+	// 			setProducts(data.products)
 	// 		})
 	// 		.catch((err) => console.log(err))
 	// }
 
-	// const addProduct = () => {
-	// 	fetch('/addCard', {
-	// 		method: 'POST',
-	// 		headers: { 'Content-Type': 'application/json', },
-	// 		body: JSON.stringify({
-	// 			// name: formData, // Use your own property name / key
-	// 			item: {
-	// 				id: 2,
-	// 				name: "cheese"
-	// 			}
-	// 		}),
-	// 	})
-	// 		.then((res) => res.json())
-	// 		.then((data) => setCards(data))
-	// 		.catch((err) => console.log(err))
-	// }
+	const addProduct = () => {
+		fetch('/addProduct', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', },
+			body: JSON.stringify({
+				// name: formData, // Use your own property name / key
+				item: {
+					productName: "Scarf",
+					description: "A wool scarf.",
+					creationTime: 5,
+					id: 5,
+				},
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => setProducts(data.products as IProduct[]))
+			.catch((err) => console.log(err))
+	}
 
 	// const updateProduct = () => {
-	// 	fetch('/updateCard', {
+	// 	fetch('/updateProduct', {
 	// 		method: 'PUT',
 	// 		headers: { 'Content-Type': 'application/json', },
 	// 		body: JSON.stringify({
@@ -62,26 +68,20 @@ export function Dashboard() {
 	// 		}),
 	// 	})
 	// 		.then((res) => res.json())
-	// 		.then((data) => setCards(data))
+	// 		.then((data) => setProducts(data))
 	// 		.catch((err) => console.log(err))
 	// }
 
-	// const removeProduct = () => {
-	// 	fetch('/removeCard', {
-	// 		method: 'PUT',
-	// 		headers: { 'Content-Type': 'application/json', },
-	// 		body: JSON.stringify({
-	// 			// name: formData, // Use your own property name / key
-	// 			item: {
-	// 				id: 2,
-	// 				name: "milk"
-	// 			}
-	// 		}),
-	// 	})
-	// 		.then((res) => res.json())
-	// 		.then((data) => setCards(data))
-	// 		.catch((err) => console.log(err))
-	// }
+	const deleteProduct = (id: string) => {
+		fetch('/deleteProduct', {
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json', },
+			body: JSON.stringify({ id: id }),
+		})
+			.then((res) => res.json())
+			.then((data) => setProducts(data.products as IProduct[]))
+			.catch((err) => console.log(err))
+	}
 
 	//   const handleSubmit = (event) => {
 	// 	event.preventDefault()
@@ -90,13 +90,20 @@ export function Dashboard() {
 
 	return (
 		<div>
-			{cards ? (cards.map((card, i) =>
-				<Card style={{ width: '18rem' }} key={i}>
+			{products.length > 0 ? (products.map((product, i) =>
+				<Card className='card' key={i}>
 					{/* <Card.Img variant="top" src="holder.js/100px180" /> */}
 					<Card.Body>
-						<Card.Title>{card.productName}</Card.Title>
-						<Card.Text>{card.description}</Card.Text>
-						{/* <Button variant="primary">Go somewhere</Button> */}
+						<Card.Title>{product.productName}</Card.Title>
+						<Card.Text>{product.description}</Card.Text>
+						<div className='action-buttons'>
+							<button className="button" onClick={() => deleteProduct(product.id)}>
+								<div className="button-icon"><FaPencilAlt /></div>
+							</button>
+							<button className="button" onClick={() => deleteProduct(product.id)}>
+								<div className="button-icon"><FaTrashAlt /></div>
+							</button>
+						</div>
 					</Card.Body>
 				</Card>))
 				: <></>

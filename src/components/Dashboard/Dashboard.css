@@ -1,0 +1,28 @@
+.card {
+    width: 400px;
+    margin: 25px;
+    border-radius: 30px !important;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    /* flex-wrap: wrap; */
+    /* margin: 5px; */
+}
+
+.button {
+    /* display: flex; */
+    /* align-items: center; */
+    /* width: 90%; */
+    /* text-align: left; */
+    background-color: white;
+    border: 0px;
+    margin: 4px;
+    color:#5A5A5A;
+}
+
+.button-icon {
+    display: inline;
+    font-size: x-small;
+}

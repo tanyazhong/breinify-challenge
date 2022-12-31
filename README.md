@@ -68,3 +68,5 @@ changed proxy to "http://127.0.0.1:5001"
 
 
 this is my first time working with redis. I debate on whether I should store under one key or one ket for each product card
+todo:
+backend error checking

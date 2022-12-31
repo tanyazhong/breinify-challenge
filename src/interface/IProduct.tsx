@@ -4,5 +4,5 @@ export interface IProduct {
     description: string;
     creationTime: Date;
     // productImg:
-    uuid: string;
+    id: string;
 }
