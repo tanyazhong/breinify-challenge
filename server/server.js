@@ -27,17 +27,28 @@ app.get('/', (req, res) => {
 	res.send('In the server');
 });
 
-// const cb = async (req, res) => {
-// 	await client.set('key', JSON.stringify({ hello: 'world' }));
-// 	const value = await client.get('key');
-// 	res.send({ value: value });
-// }
-// app.get('/test', cb)
+// initialize db with cards passed from frontend
+const cb = async (req, res) => {
+	await client.set('cards', JSON.stringify(req.body.cards));
+	const data = await client.get('cards');
+	res.send({ cards:  JSON.parse(data) });
+}
+app.post('/initCards', cb)
 
 // GET
 
+// const redisGet = (key) => {
+// 	console.log("HERE")
+// 	return new Promise((resolve, reject) => {
+// 		client.get(key, (err, data) => {
+// 			if (err) reject(err);
+// 			return resolve(data)
+// 		})
+// 	})
+// }
+
 const getCards = async (req, res) => {
-	// await client.set('cards', JSON.stringify([{ hello: 'world' }]));
+	// await client.set('cards', JSON.stringify([{ id: 2 }]));
 	const data = await client.get('cards', (err, val) => {
 		if (err) throw err;
 	})
@@ -45,6 +56,12 @@ const getCards = async (req, res) => {
 }
 
 app.get('/getCards', getCards);
+// async (req, res) => { 
+// 	redisGet('cards').then(cards => {
+// 		console.log(cards)
+// 		res.json({cards: JSON.parse(cards)}).status(200)
+// 	})
+// });
 
 // POST
 
@@ -57,9 +74,10 @@ const addCard = async (req, res) => {
 	if (parsedCards === null) {
 		parsedCards = [item];
 	}
-	else { 
+	else {
 		parsedCards.push(item);
 	}
+	// set the data
 	client.set("cards", JSON.stringify(parsedCards), (err, val) => {
 		if (err) throw err;
 	})
@@ -72,33 +90,31 @@ const addCard = async (req, res) => {
 app.post('/addCard', addCard)
 
 // PUT
-function updateCard(item) {
-	return new Promise((resolve, reject) => {
-		getCards().then(cards => {
-			for (let i = 0; i < cards.length; i++) {
-				if (cards[i].id == id) {
-					cards[i] = item;
-					break;
-				}
-			}
-			client.set("cards", JSON.stringify(cards), (err, stored) => {
-				if (stored) { resolve(item); }
-			})
-		})
+
+const updateCard = async (req, res) => {
+	const item = req.body.item;
+	let cards = await client.get('cards', (err, val) => {
+		if (err) throw err;
 	})
+	let parsedCards = JSON.parse(cards);
+	console.log(parsedCards)
+	// Look for the product whose id matches the id from the request body
+	for (let i = 0; i < parsedCards.length; i++) { 
+		if (parsedCards[i].id == item.id) {
+			parsedCards[i] = item;
+			break;
+		}
+	}
+	client.set("cards", JSON.stringify(parsedCards), (err, val) => {
+		if (err) throw err;
+	})
+	cards = await client.get('cards', (err, val) => {
+		if (err) throw err;
+	})
+	res.send({ cards: cards })
 }
 
-app.get('/updateCard', (req, res) => {
-	try {
-		const item = req.body.item;
-		updateCard(item).then(updated => {
-			res.json({ updated: updated }).status(200);
-		})
-	}
-	catch (e) {
-		res.json({ err: e }).status(500);
-	}
-})
+app.put('/updateCard', updateCard)
 
 
 // DELETE
@@ -120,7 +136,7 @@ function removeCard(id) {
 	})
 }
 
-app.get('/removeCard/:id', (req, res) => {
+app.delete('/removeCard', (req, res) => {
 	try {
 		const id = req.params.id;
 		removeCard(id).then(removed => {
@@ -131,13 +147,6 @@ app.get('/removeCard/:id', (req, res) => {
 		res.json({ err: e }).status(500);
 	}
 })
-
-// addCard({ id: 1, name: "shirt", description: "a short shirt" }).then(res => {
-// 	console.log(res);
-// 	getCards().then(cards => {
-// 		console.log(cards);
-// 	})
-// })
 
 app.listen(port, () => console.log(`Running on port: ${port}`));
 

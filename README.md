@@ -64,3 +64,7 @@ You will have 1 week to finish this challenge. Once you finish, please push your
 
 We added a `"proxy": "http://localhost:5001"` into package.json to help clean up endpoint calls.
 changed proxy to "http://127.0.0.1:5001"
+
+
+
+this is my first time working with redis. I debate on whether I should store under one key or one ket for each product card
