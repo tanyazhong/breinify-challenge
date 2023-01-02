@@ -10,7 +10,7 @@ export function Dashboard() {
 	const [products, setProducts] = useState<IProduct[]>([])
 	const [ascending, setAscending] = useState(true)
 
-	// get a compare fn for products based on 'ascending' state
+	// get a compare fn for products depending on 'ascending' state
 	const getCompareFn = (a: IProduct, b: IProduct) => {
 		if (ascending) { return a.creationTime < b.creationTime ? - 1 : a.creationTime > b.creationTime ? 1 : 0 }
 		else { return a.creationTime > b.creationTime ? -1 : a.creationTime < b.creationTime ? 1 : 0 }
@@ -47,25 +47,25 @@ export function Dashboard() {
 		setProducts(sorted);
 	}, [ascending]);
 
-	const getProducts = () => {
-		fetch('/getProducts')
-			.then((res) => res.json())
-			.then(data => {
-				setProducts((data.products as IProduct[]).sort(getCompareFn))
-			})
-			.catch((err) => console.log(err))
-	}
+	// const getProducts = () => {
+	// 	fetch('/getProducts')
+	// 		.then((res) => res.json())
+	// 		.then(data => {
+	// 			setProducts((data.products as IProduct[]).sort(getCompareFn))
+	// 		})
+	// 		.catch((err) => console.log(err))
+	// }
 
 	const addProduct = () => {
 		fetch('/addProduct', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', },
 			body: JSON.stringify({
-				// name: formData, // Use your own property name / key
 				item: {
 					productName: "YEAH",
 					description: "A wool scarf.",
 					creationTime: new Date(),
+					productImg: "https://placekitten.com/700/500",
 					id: 5,
 				},
 			}),
@@ -75,22 +75,21 @@ export function Dashboard() {
 			.catch((err) => console.log(err))
 	}
 
-	// const updateProduct = () => {
-	// 	fetch('/updateProduct', {
-	// 		method: 'PUT',
-	// 		headers: { 'Content-Type': 'application/json', },
-	// 		body: JSON.stringify({
-	// 			// name: formData, // Use your own property name / key
-	// 			item: {
-	// 				id: 2,
-	// 				name: "milk"
-	// 			}
-	// 		}), 
-	// 	})
-	// 		.then((res) => res.json())
-	// 		.then((data) => setProducts((data.products as IProduct[]).sort(getCompareFn)))
-	// 		.catch((err) => console.log(err))
-	// }
+	const updateProduct = () => {
+		fetch('/updateProduct', {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json', },
+			body: JSON.stringify({
+				item: {
+					id: 2,
+					name: "milk"
+				}
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => setProducts((data.products as IProduct[]).sort(getCompareFn)))
+			.catch((err) => console.log(err))
+	}
 
 	const deleteProduct = (id: string) => {
 		fetch('/deleteProduct', {
@@ -108,13 +107,14 @@ export function Dashboard() {
 	// 	saveGames() // Save games when form is submitted
 	//   }
 
+	//TODO: IMPLEMENT add and edit. update readme with notes and description of implementation
 	return (
 		<div>
 			<Header handleSorting={handleSorting} addProduct={addProduct} />
 			<div className='card-container'>
 				{products.length > 0 ? (products.map((product, i) =>
 					<Card className='card' key={i}>
-						{/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+						<Card.Img variant="top" src={product.productImg} />
 						<Card.Body>
 							<Card.Title>{product.productName}</Card.Title>
 							<Card.Text>{product.description}</Card.Text>

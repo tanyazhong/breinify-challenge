@@ -1,17 +1,27 @@
 .header {
-    background-color: lightblue;
-    height: 125px;
+    background-color: rgb(221, 240, 248);
+    height: 150px;
     padding: 20px;
+    /* display: flex; */
+    /* align-items: center; */
+}
+
+.title {
+    margin: auto;
+}
+
+.header-action-buttons {
     display: flex;
-    align-items: center;
-  }
-  
-  .dropdown {
-    margin: 10px;
+    justify-content: flex-end;
+}
+
+.dropdown {
     display: inline-block;
-  }
-  
-  .dropdown-toggle {
-    background-color: darkblue !important;
+}
+
+.header-button {
+    display: inline-block;
+    background-color: slategray !important;
     border: none !important;
-  }
+    margin: 5px;
+}

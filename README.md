@@ -66,6 +66,9 @@ We added a `"proxy": "http://localhost:5001"` into package.json to help clean up
 
 
 
-this is my first time working with redis. I debate on whether I should store under one key or one ket for each product card
+sorting: sorting is done on the frontend
 todo:
 backend error checking
+make the product card another component
+opption to choose a grid or column layout for the products
+ability to upload image instead of palceholder image
