@@ -1,5 +1,5 @@
 .header {
-    background-color: rgb(221, 240, 248);
+    background-color: rgb(236, 249, 255);
     padding: 20px;
 }
 
@@ -10,6 +10,7 @@
 
 .title {
     margin: auto;
+    color: rgb(29, 34, 34);
 }
 
 .header-action-buttons {
@@ -35,7 +36,7 @@
 .btn:first-child:active,
 :not(.btn-check)+.btn:active,
 .btn:hover {
-    color: #000;
+    color: rgb(29, 34, 34) !important;
 }
 
 .action {
