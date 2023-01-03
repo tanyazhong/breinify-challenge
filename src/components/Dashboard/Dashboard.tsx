@@ -100,11 +100,12 @@ export function Dashboard() {
 		<>
 			<Header ascending={ascending} setAscending={setAscending} addProduct={addProduct}
 				searchInput={searchInput} setSearchInput={setSearchInput} />
+			{/* Filter, Sort, and Display cards */}
 			<div className='card-container'>
 				{products.length > 0 ?
 					(products.filter((p) => p.productName.match(searchInput)).sort(getCompareFn)
-						.map((product, i) => <div key={i}>
-							<Card className='card' >
+						.map((product, i) =>
+							<Card className='card' key={i}>
 								<Card.Img variant="top" src={product.productImg} />
 								<Card.Body>
 									<Card.Title>{product.productName}</Card.Title>
@@ -118,8 +119,7 @@ export function Dashboard() {
 										</button>
 									</div>
 								</Card.Body>
-							</Card>
-						</div>))
+							</Card>))
 					: <></>
 				}
 			</div>
