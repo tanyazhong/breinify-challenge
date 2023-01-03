@@ -33,7 +33,8 @@ const handleError = (err, val) => {
 	if (err) console.log(err);
 }
 
-// initialize db with products passed from frontend
+// initProducts: endpoint to initialize db with products passed from frontend
+// like GET but it sets some data first
 const cb = async (req, res) => {
 	await client.set(PRODUCTS_KEY, JSON.stringify(req.body.products));
 	const products = await client.get(PRODUCTS_KEY);

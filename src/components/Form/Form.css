@@ -1,0 +1,13 @@
+.form-group {
+    margin: 10px;
+}
+
+.label {
+    font-size: xx-small !important;
+}
+
+.form-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}

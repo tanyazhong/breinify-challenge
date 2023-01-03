@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 const curTime: Date = new Date()
 const RANDOM_IMAGE_URL: string = "https://picsum.photos/seed/picsum/536/354";
 
-export const productData: IProduct[] = [
+// dummy dataset
+export const dummyProductData: IProduct[] = [
     {
         productName: "Hat",
         description: "Cute hat for a cute cat.",

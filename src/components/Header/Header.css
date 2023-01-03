@@ -1,9 +1,11 @@
 .header {
     background-color: rgb(221, 240, 248);
-    height: 150px;
     padding: 20px;
-    /* display: flex; */
-    /* align-items: center; */
+}
+
+.searchbar-container {
+    display: flex;
+    justify-content: flex-start;
 }
 
 .title {
@@ -21,7 +23,27 @@
 
 .header-button {
     display: inline-block;
-    background-color: slategray !important;
-    border: none !important;
+    background-color: #fff !important;
+    color: slategray !important;
+    border: 1px solid #ced4da !important;
+    margin: 10px;
+}
+
+.btn-check:checked+.btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check)+.btn:active,
+.btn:hover {
+    color: #000;
+}
+
+.action {
+    display: inline-block;
     margin: 5px;
+    font-size: x-small !important;
+}
+
+.searchbar {
+    width: 200px !important;
 }

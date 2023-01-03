@@ -72,3 +72,4 @@ backend error checking
 make the product card another component
 opption to choose a grid or column layout for the products
 ability to upload image instead of palceholder image
+search is case sensitive
